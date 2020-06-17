@@ -1,0 +1,10 @@
+asgiref==3.2.9
+dnspython==1.16.0
+image==1.5.32
+numpy==1.18.5
+opencv-contrib-python==4.2.0.34
+opencv-python==4.2.0.34
+Pillow==7.1.2
+pymongo==3.10.1
+pytz==2020.1
+six==1.15.0
