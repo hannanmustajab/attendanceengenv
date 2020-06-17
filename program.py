@@ -1,8 +1,10 @@
 from threading import Thread
 import time
 import random
+
 # Set to false to disable testing/tracing code
-from infrastructure.face_recognizer import startCapture
+from face_recognizer import startCapture
+from infrastructure.temperature import checkTemperature
 
 VERBOSE_MODE = True
 
@@ -14,7 +16,6 @@ MARK_ATTENDANCE_STATE = 3
 DISPENSE_LIQUID_STATE = 4
 ERROR_STATE = 5
 
-
 ################################################################################
 # Setup hardware
 
@@ -24,12 +25,12 @@ ERROR_STATE = 5
 if VERBOSE_MODE:
     print("VERBOSE MODE ON")
 
-
 ################################################################################
 # Variables
-MotionDetected = 1                               # changes value to true if Motion is detected.
+MotionDetected = 1  # changes value to true if Motion is detected.
 # timer = threading.Timer(15.0)
 temperature_threshold = 99.8
+
 
 ################################################################################
 # Support functions
@@ -39,17 +40,25 @@ def log(s):
     if VERBOSE_MODE:
         print(s)
 
-def checkTemperature():
+
+# Check temperature Function
+checkTemperature()
+
+
+# Detect Motion / Proximity
+def detectMotion():
     """
-        It should return the temperature in Degree Farenheit
-        :return: Boolean
+    It should return True or False based on motion.
+    :return: Boolean
     """
-    temperature = random.randrange(95,102)
-    return temperature
+    global MotionDetected
+    MotionDetected = False
+    return MotionDetected
 
 state = IDLE_STATE
 
-
+################################################################################
+# Infinite Loop Starts Here.
 while True:
     test_trigger = False
 
@@ -57,10 +66,10 @@ while True:
 
     if state == IDLE_STATE:
         log("IDLE")
-
+        time.sleep(2)
         if VERBOSE_MODE:
             print("IDLE")
-
+        print(detectMotion)
         if MotionDetected:
             state = FACE_RECOGNITION
             print("Motion Detected")
@@ -71,7 +80,7 @@ while True:
         if VERBOSE_MODE:
             print("FACE_RECOGNITION")
 
-        # Start capturing video feed. 
+        # Start capturing video feed.
         Thread(target=startCapture())
 
         # If employee is found, Then move to temperature checking state.
@@ -79,7 +88,7 @@ while True:
             print("Captured...")
             state = TEMPERATURE_CHECK_STATE
             continue
-        else :
+        else:
             state = IDLE_STATE
 
         time.sleep(1)
@@ -91,8 +100,8 @@ while True:
         if VERBOSE_MODE:
             print("TEMPERATURE_CHECK_STATE")
         time.sleep(1)
-        
-        # Check temperature 
+
+        # Check temperature
         current_temperature = checkTemperature()
         if current_temperature < temperature_threshold:
             state = MARK_ATTENDANCE_STATE
@@ -117,5 +126,3 @@ while True:
         time.sleep(1)
         state = IDLE_STATE
         continue
-
-    

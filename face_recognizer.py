@@ -1,7 +1,6 @@
 import cv2
-
 recognizer = cv2.face.LBPHFaceRecognizer_create()
-recognizer.read('trainer.yml')
+recognizer.read('trainer/trainer.yml')
 cascadePath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + cascadePath)
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -31,7 +30,7 @@ def startCapture():
             minNeighbors=5,
             minSize=(int(minW), int(minH)),
         )
-        print(faces)
+
 
         for (x, y, w, h) in faces:
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -65,10 +64,10 @@ def startCapture():
             )
 
         if confidence > 50:
-            print("Match Found, Marking Attendance!")
             # result = Employee.Employee(id).addAttendance(method="Face")
             print("Marking Attendance")
             # print(result)
+            return True
             break
 
         cv2.imshow('camera', img)
